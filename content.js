@@ -1,6 +1,8 @@
 (function () {
   'use strict';
 
+  console.log('[YouTube Web Fullscreen] Extension loaded successfully.');
+
   let isWebFullscreen = false;
   let webFullscreenBtn = null;
   let svgExpandNode = null;
@@ -52,6 +54,8 @@
       isWebFullscreen = !isWebFullscreen;
     }
 
+    console.log('[YouTube Web Fullscreen] Mode toggled:', isWebFullscreen);
+
     const htmlEl = document.documentElement;
     if (isWebFullscreen) {
       htmlEl.classList.add('yt-web-fullscreen-active');
@@ -65,7 +69,7 @@
     window.dispatchEvent(new Event('resize'));
   }
 
-  // Atualiza aparência e tooltip do botão com troca segura de estilo de exibição dos nós SVG
+  // Atualiza aparência e tooltip do botão com troca de visibilidade SVG
   function updateButtonUI() {
     if (!webFullscreenBtn || !svgExpandNode || !svgCompressNode) return;
 
@@ -89,8 +93,8 @@
     const rightControls = document.querySelector('.ytp-right-controls');
     if (!rightControls) return;
 
-    // Se já estiver injetado, garante que a referência exista
-    let existingBtn = document.getElementById('yt-web-fullscreen-btn');
+    // Se já estiver injetado dentro do rightControls atual, apenas atualiza UI
+    let existingBtn = rightControls.querySelector('#yt-web-fullscreen-btn');
     if (existingBtn) {
       webFullscreenBtn = existingBtn;
       updateButtonUI();
@@ -126,6 +130,8 @@
     } else {
       rightControls.appendChild(button);
     }
+
+    console.log('[YouTube Web Fullscreen] Button injected into player controls.');
   }
 
   // Verifica se o foco atual está em algum campo de texto para não disparar o atalho por engano
@@ -167,7 +173,6 @@
       if (window.location.pathname.includes('/watch')) {
         injectButton();
       } else if (isWebFullscreen) {
-        // Se saiu de um vídeo para outra página (ex: home do YouTube), reseta o modo
         toggleWebFullscreen(false);
       }
     });
@@ -186,7 +191,6 @@
 
     document.addEventListener('keydown', handleKeyDown, true);
 
-    // Eventos específicos do YouTube SPA
     window.addEventListener('yt-navigate-finish', () => {
       if (window.location.pathname.includes('/watch')) {
         setTimeout(injectButton, 300);
@@ -195,7 +199,6 @@
       }
     });
 
-    // Repetidor leve inicial para casos de carregamento lento do player
     let attempts = 0;
     const checkInterval = setInterval(() => {
       attempts++;
@@ -203,11 +206,10 @@
         injectButton();
         clearInterval(checkInterval);
       }
-      if (attempts > 20) clearInterval(checkInterval);
+      if (attempts > 30) clearInterval(checkInterval);
     }, 500);
   }
 
-  // Executa ao carregar
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
