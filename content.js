@@ -8,11 +8,11 @@
   let svgNode = null;
   let pathNode = null;
 
-  // Vetores de ícones 24x24 perfeitamente desenhados
-  const PATH_EXPAND = 'M3 3h7v2H5v5H3V3zm18 0h-7v2h5v5h2V3zM3 21h7v-2H5v-5H3v7zm18 0h-7v-2h5v-5h2v7z M7 7h10v10H7z';
-  const PATH_COMPRESS = 'M10 10H3V8h5V3h2v7zm4 0h7V8h-5V3h-2v7zM10 14H3v2h5v5h2v-7zm4 0h7v2h-5v5h-2v-7z M7 7h10v10H7z';
+  // Vetores de ícones 24x24 com desenho de monitor vazado no centro e cantos de expansão/compressão
+  const PATH_EXPAND = 'M3 3h6v2H5v4H3V3zm18 0h-6v2h4v4h2V3zM3 21h6v-2H5v-4H3v6zm18 0h-6v-2h4v-4h2v6z M7 8h10v8H7zm2 2v4h6v-4H9z';
+  const PATH_COMPRESS = 'M8 8H3v2h3v3h2V8zm8 0h5v2h-3v3h-2V8zM8 16H3v-2h3v-3h2v5zm8 0h5v-2h-3v-3h-2v5z M7 8h10v8H7zm2 2v4h6v-4H9z';
 
-  // Cria um único elemento SVG com viewBox 24x24
+  // Cria o elemento SVG 24x24 perfeito
   function createSvgElement() {
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.setAttribute('viewBox', '0 0 24 24');
@@ -116,7 +116,7 @@
       rightControls.appendChild(button);
     }
 
-    console.log('[YouTube Web Fullscreen] Ícone do player adicionado e centralizado com sucesso!');
+    console.log('[YouTube Web Fullscreen] Ícone do player adicionado e desenhado com sucesso!');
   }
 
   function isTyping(event) {
