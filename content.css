@@ -1,0 +1,105 @@
+/* ==========================================================================
+   YouTube Web Fullscreen - Preencher Janela (Firefox Extension)
+   ========================================================================== */
+
+/* Bloqueia a rolagem global quando o modo estiver ativo */
+html.yt-web-fullscreen-active,
+html.yt-web-fullscreen-active body {
+  overflow: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  height: 100% !important;
+  width: 100% !important;
+}
+
+/* Oculta elementos irrelevantes (cabeçalho, barra lateral, comentários, etc) */
+html.yt-web-fullscreen-active #masthead-container,
+html.yt-web-fullscreen-active ytd-masthead,
+html.yt-web-fullscreen-active #below,
+html.yt-web-fullscreen-active #secondary,
+html.yt-web-fullscreen-active #chat,
+html.yt-web-fullscreen-active #comments,
+html.yt-web-fullscreen-active tp-yt-app-drawer,
+html.yt-web-fullscreen-active ytd-miniplayer,
+html.yt-web-fullscreen-active #guide {
+  display: none !important;
+}
+
+/* Redimensiona o container principal da página para 0 margin top */
+html.yt-web-fullscreen-active #page-manager,
+html.yt-web-fullscreen-active ytd-app {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Torna o container do vídeo totalmente fixo na viewport (100vw x 100vh) */
+html.yt-web-fullscreen-active ytd-watch-flexy {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 999999 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: #000 !important;
+  min-height: 100vh !important;
+  max-height: 100vh !important;
+}
+
+/* Garante que todos os wrappers internos do player se expandam completamente */
+html.yt-web-fullscreen-active #player-full-width-container,
+html.yt-web-fullscreen-active #player-theater-container,
+html.yt-web-fullscreen-active #player-container,
+html.yt-web-fullscreen-active #ytd-player,
+html.yt-web-fullscreen-active #movie_player,
+html.yt-web-fullscreen-active .html5-video-container,
+html.yt-web-fullscreen-active .html5-main-video,
+html.yt-web-fullscreen-active video {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100vw !important;
+  max-height: 100vh !important;
+  top: 0 !important;
+  left: 0 !important;
+  position: absolute !important;
+  object-fit: contain !important;
+  margin: 0 !important;
+}
+
+/* Ajusta os controles do player para o tamanho total da janela */
+html.yt-web-fullscreen-active .ytp-chrome-bottom {
+  width: calc(100% - 24px) !important;
+  left: 12px !important;
+}
+
+/* Estilo do botão customizado na barra de controles do player */
+.ytp-button.yt-web-fullscreen-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: top;
+  padding: 0;
+  width: 36px;
+  height: 100%;
+  cursor: pointer;
+  opacity: 0.9;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.ytp-button.yt-web-fullscreen-btn:hover {
+  opacity: 1;
+  transform: scale(1.12);
+}
+
+.ytp-button.yt-web-fullscreen-btn svg {
+  width: 22px;
+  height: 22px;
+  fill: #ffffff;
+  transition: fill 0.2s ease;
+}
+
+/* Destaque visual quando ativado */
+.ytp-button.yt-web-fullscreen-btn.active svg {
+  fill: #3ea6ff; /* Azul característico de controles ativos do YouTube */
+}
