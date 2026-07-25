@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  console.log('[YouTube Web Fullscreen] Extension loaded successfully.');
+  console.log('%c[YouTube Web Fullscreen] Extensão ativa e pronta! Pressione "W" em qualquer vídeo.', 'color: #3ea6ff; font-weight: bold; font-size: 14px;');
 
   let isWebFullscreen = false;
   let webFullscreenBtn = null;
@@ -41,7 +41,7 @@
       '7', '7', '10', '10'
     );
     svgCompressNode = createSvgIcon(
-      'M10 10H3V8h5V3h2v7zm4 0h7V8h-5V3h-2v7zM10 14H3v2h5v5h2v-7zm4 0h7v2h-5v5h-2v-7z',
+      'M10 10H3V8h5V3h2v7zm4 0h7V8h-5V3h-2v7zM10 14H3v2h5v5h-2v-7zm4 0h7v2h-5v5h-2v-7z',
       '8', '8', '8', '8'
     );
   }
@@ -54,7 +54,7 @@
       isWebFullscreen = !isWebFullscreen;
     }
 
-    console.log('[YouTube Web Fullscreen] Mode toggled:', isWebFullscreen);
+    console.log('%c[YouTube Web Fullscreen] Modo alterado: ' + (isWebFullscreen ? 'ATIVADO (100% Janela)' : 'DESATIVADO'), 'color: #ff0000; font-weight: bold;');
 
     const htmlEl = document.documentElement;
     if (isWebFullscreen) {
@@ -93,7 +93,6 @@
     const rightControls = document.querySelector('.ytp-right-controls');
     if (!rightControls) return;
 
-    // Se já estiver injetado dentro do rightControls atual, apenas atualiza UI
     let existingBtn = rightControls.querySelector('#yt-web-fullscreen-btn');
     if (existingBtn) {
       webFullscreenBtn = existingBtn;
@@ -105,7 +104,6 @@
       initIcons();
     }
 
-    // Cria o botão HTML
     const button = document.createElement('button');
     button.id = 'yt-web-fullscreen-btn';
     button.className = 'ytp-button yt-web-fullscreen-btn';
@@ -123,7 +121,6 @@
     webFullscreenBtn = button;
     updateButtonUI();
 
-    // Insere antes do botão de Tela Cheia se possível, ou no final dos controles da direita
     const fullscreenBtn = rightControls.querySelector('.ytp-fullscreen-button');
     if (fullscreenBtn) {
       rightControls.insertBefore(button, fullscreenBtn);
@@ -131,7 +128,7 @@
       rightControls.appendChild(button);
     }
 
-    console.log('[YouTube Web Fullscreen] Button injected into player controls.');
+    console.log('[YouTube Web Fullscreen] Botão injetado com sucesso na barra de controles do player.');
   }
 
   // Verifica se o foco atual está em algum campo de texto para não disparar o atalho por engano
@@ -183,7 +180,6 @@
     });
   }
 
-  // Inicialização e listeners de eventos de navegação SPA do YouTube
   function init() {
     initIcons();
     injectButton();
