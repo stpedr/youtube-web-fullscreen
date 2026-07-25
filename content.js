@@ -91,11 +91,15 @@
     if (!rightControls) return;
 
     // Se já estiver lá dentro, apenas garante estado
-    let existingBtn = rightControls.querySelector('#yt-web-fullscreen-btn');
+    let existingBtn = document.getElementById('yt-web-fullscreen-btn');
     if (existingBtn) {
-      webFullscreenBtn = existingBtn;
-      updateButtonUI();
-      return;
+      if (rightControls.contains(existingBtn)) {
+        webFullscreenBtn = existingBtn;
+        updateButtonUI();
+        return;
+      } else {
+        existingBtn.remove();
+      }
     }
 
     if (!svgExpandNode || !svgCompressNode) {
@@ -119,15 +123,15 @@
     webFullscreenBtn = button;
     updateButtonUI();
 
-    // Insere imediatamente antes do botão de Tela Cheia ou no final dos controles
+    // Insere com segurança usando o parentNode do botão de tela cheia para evitar erro de hierarquia no DOM
     const fullscreenBtn = rightControls.querySelector('.ytp-fullscreen-button');
-    if (fullscreenBtn) {
-      rightControls.insertBefore(button, fullscreenBtn);
+    if (fullscreenBtn && fullscreenBtn.parentNode) {
+      fullscreenBtn.parentNode.insertBefore(button, fullscreenBtn);
     } else {
       rightControls.appendChild(button);
     }
 
-    console.log('[YouTube Web Fullscreen] Ícone do player adicionado na barra de controles!');
+    console.log('[YouTube Web Fullscreen] Ícone do player adicionado com sucesso!');
   }
 
   function isTyping(event) {
@@ -189,7 +193,7 @@
       }
     });
 
-    // Intervalo de verificação para pegar o player assim que os controles carregarem
+    // Intervalo de verificação para garantir injeção quando o player estiver pronto
     const interval = setInterval(() => {
       if (window.location.pathname.includes('/watch')) {
         injectButton();
