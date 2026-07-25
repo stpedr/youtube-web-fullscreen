@@ -1,52 +1,42 @@
 (function () {
   'use strict';
 
-  console.log('%c[YouTube Web Fullscreen] Extensão ativa e pronta! Pressione "W" em qualquer vídeo.', 'color: #3ea6ff; font-weight: bold; font-size: 14px;');
+  console.log('%c[YouTube Web Fullscreen] Extensão pronta! Procurando controles do player...', 'color: #3ea6ff; font-weight: bold; font-size: 13px;');
 
   let isWebFullscreen = false;
   let webFullscreenBtn = null;
   let svgExpandNode = null;
   let svgCompressNode = null;
 
-  // Função auxiliar para criar elementos SVG com segurança total no DOM (sem innerHTML)
-  function createSvgIcon(pathD, rectX, rectY, rectW, rectH) {
+  // Função auxiliar para criar elementos SVG em conformidade com o padrão de 36x36 do YouTube
+  function createSvgIcon(pathD) {
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    svg.setAttribute('viewBox', '0 0 24 24');
-    svg.setAttribute('width', '100%');
     svg.setAttribute('height', '100%');
+    svg.setAttribute('version', '1.1');
+    svg.setAttribute('viewBox', '0 0 36 36');
+    svg.setAttribute('width', '100%');
 
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    path.setAttribute('fill', 'currentColor');
+    path.setAttribute('fill', '#ffffff');
     path.setAttribute('d', pathD);
     svg.appendChild(path);
-
-    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-    rect.setAttribute('x', rectX);
-    rect.setAttribute('y', rectY);
-    rect.setAttribute('width', rectW);
-    rect.setAttribute('height', rectH);
-    rect.setAttribute('rx', '1');
-    rect.setAttribute('fill', 'none');
-    rect.setAttribute('stroke', 'currentColor');
-    rect.setAttribute('stroke-width', '1.5');
-    svg.appendChild(rect);
 
     return svg;
   }
 
-  // Instancia os nós SVG com as geometrias dos ícones
+  // Ícones nativos do YouTube no grid 36x36
   function initIcons() {
+    // Ícone de expandir para preencher a janela (frame retangular com cantos de expansão)
     svgExpandNode = createSvgIcon(
-      'M3 3h7v2H5v5H3V3zm18 0h-7v2h5v5h2V3zM3 21h7v-2H5v-5H3v7zm18 0h-7v-2h5v-5h2v7z',
-      '7', '7', '10', '10'
+      'M 10,11 H 26 V 25 H 10 Z M 12,13 V 23 H 24 V 13 Z M 7,7 H 14 V 9 H 9 V 14 H 7 Z M 22,7 H 29 V 14 H 27 V 9 H 22 Z M 7,22 H 9 V 27 H 14 V 29 H 7 Z M 27,22 H 29 V 29 H 22 V 27 H 27 Z'
     );
+    // Ícone de comprimir para sair do preenchimento
     svgCompressNode = createSvgIcon(
-      'M10 10H3V8h5V3h2v7zm4 0h7V8h-5V3h-2v7zM10 14H3v2h5v5h-2v-7zm4 0h7v2h-5v5h-2v-7z',
-      '8', '8', '8', '8'
+      'M 10,11 H 26 V 25 H 10 Z M 12,13 V 23 H 24 V 13 Z M 11,11 H 13 V 7 H 7 V 13 H 9 V 9 H 11 Z M 25,11 H 23 V 7 H 29 V 13 H 27 V 9 H 25 Z M 11,25 H 13 V 29 H 7 V 23 H 9 V 27 H 11 Z M 25,25 H 23 V 29 H 29 V 23 H 27 V 27 H 25 Z'
     );
   }
 
-  // Função principal para alternar o estado de Web Fullscreen
+  // Alterna entre o modo padrão e o modo Web Fullscreen
   function toggleWebFullscreen(forceState) {
     if (typeof forceState === 'boolean') {
       isWebFullscreen = forceState;
@@ -54,7 +44,7 @@
       isWebFullscreen = !isWebFullscreen;
     }
 
-    console.log('%c[YouTube Web Fullscreen] Modo alterado: ' + (isWebFullscreen ? 'ATIVADO (100% Janela)' : 'DESATIVADO'), 'color: #ff0000; font-weight: bold;');
+    console.log('%c[YouTube Web Fullscreen] Modo: ' + (isWebFullscreen ? '100% JANELA' : 'NORMAL'), 'color: #ff0000; font-weight: bold;');
 
     const htmlEl = document.documentElement;
     if (isWebFullscreen) {
@@ -64,12 +54,10 @@
     }
 
     updateButtonUI();
-
-    // Notifica o player do YouTube para recalcular o aspect ratio do vídeo imediatamente
     window.dispatchEvent(new Event('resize'));
   }
 
-  // Atualiza aparência e tooltip do botão com troca de visibilidade SVG
+  // Atualiza tooltip e visibilidade do ícone
   function updateButtonUI() {
     if (!webFullscreenBtn || !svgExpandNode || !svgCompressNode) return;
 
@@ -88,11 +76,21 @@
     }
   }
 
-  // Injeta o botão na barra de controles à direita do player
+  // Encontra os controles da direita do player do YouTube
+  function getRightControls() {
+    return (
+      document.querySelector('.ytp-right-controls') ||
+      document.querySelector('#movie_player .ytp-right-controls') ||
+      document.querySelector('.html5-video-player .ytp-right-controls')
+    );
+  }
+
+  // Injeta o botão na barra de controles do player do YouTube
   function injectButton() {
-    const rightControls = document.querySelector('.ytp-right-controls');
+    const rightControls = getRightControls();
     if (!rightControls) return;
 
+    // Se já estiver lá dentro, apenas garante estado
     let existingBtn = rightControls.querySelector('#yt-web-fullscreen-btn');
     if (existingBtn) {
       webFullscreenBtn = existingBtn;
@@ -121,6 +119,7 @@
     webFullscreenBtn = button;
     updateButtonUI();
 
+    // Insere imediatamente antes do botão de Tela Cheia ou no final dos controles
     const fullscreenBtn = rightControls.querySelector('.ytp-fullscreen-button');
     if (fullscreenBtn) {
       rightControls.insertBefore(button, fullscreenBtn);
@@ -128,10 +127,9 @@
       rightControls.appendChild(button);
     }
 
-    console.log('[YouTube Web Fullscreen] Botão injetado com sucesso na barra de controles do player.');
+    console.log('[YouTube Web Fullscreen] Ícone do player adicionado na barra de controles!');
   }
 
-  // Verifica se o foco atual está em algum campo de texto para não disparar o atalho por engano
   function isTyping(event) {
     const target = event.target;
     if (!target) return false;
@@ -145,18 +143,15 @@
     );
   }
 
-  // Escuta os atalhos de teclado
   function handleKeyDown(e) {
     if (isTyping(e)) return;
 
-    // Tecla 'W' ou 'w' ou 'Shift + F' para alternar
     if (e.key === 'w' || e.key === 'W' || (e.shiftKey && (e.key === 'F' || e.key === 'f'))) {
       e.preventDefault();
       e.stopPropagation();
       toggleWebFullscreen();
     }
 
-    // Tecla 'ESC' para sair se estiver ativado
     if (e.key === 'Escape' && isWebFullscreen) {
       e.preventDefault();
       e.stopPropagation();
@@ -164,7 +159,6 @@
     }
   }
 
-  // Observador de mutações do DOM para garantir injeção contínua ao navegar pelo YouTube
   function setupObserver() {
     const observer = new MutationObserver(() => {
       if (window.location.pathname.includes('/watch')) {
@@ -195,15 +189,12 @@
       }
     });
 
-    let attempts = 0;
-    const checkInterval = setInterval(() => {
-      attempts++;
-      if (document.querySelector('.ytp-right-controls')) {
+    // Intervalo de verificação para pegar o player assim que os controles carregarem
+    const interval = setInterval(() => {
+      if (window.location.pathname.includes('/watch')) {
         injectButton();
-        clearInterval(checkInterval);
       }
-      if (attempts > 30) clearInterval(checkInterval);
-    }, 500);
+    }, 1000);
   }
 
   if (document.readyState === 'loading') {

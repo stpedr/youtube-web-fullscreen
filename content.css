@@ -59,32 +59,33 @@ html.yt-web-fullscreen-active #movie_player .ytp-chrome-bottom {
   left: 12px !important;
 }
 
-/* Estilo do botão injetado na barra de controles do player */
+/* Estilo idêntico aos botões nativos do player do YouTube (ex: Modo Teatro, Tela Cheia) */
 .ytp-button.yt-web-fullscreen-btn {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  vertical-align: top !important;
-  padding: 0 !important;
+  display: inline-block !important;
   width: 36px !important;
   height: 100% !important;
+  vertical-align: top !important;
   cursor: pointer !important;
-  opacity: 0.9 !important;
-  transition: opacity 0.15s ease, transform 0.15s ease !important;
-}
-
-.ytp-button.yt-web-fullscreen-btn:hover {
-  opacity: 1 !important;
-  transform: scale(1.12) !important;
+  position: relative !important;
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  outline: none !important;
 }
 
 .ytp-button.yt-web-fullscreen-btn svg {
-  width: 22px !important;
-  height: 22px !important;
-  fill: #ffffff !important;
+  width: 100% !important;
+  height: 100% !important;
   pointer-events: none !important;
 }
 
-.ytp-button.yt-web-fullscreen-btn.active svg {
-  fill: #3ea6ff !important;
+.ytp-button.yt-web-fullscreen-btn svg path {
+  fill: #ffffff !important;
+  transition: fill 0.1s ease !important;
+}
+
+.ytp-button.yt-web-fullscreen-btn:hover svg path,
+.ytp-button.yt-web-fullscreen-btn.active svg path {
+  fill: #3ea6ff !important; /* Azul de controle ativo do YouTube */
 }
