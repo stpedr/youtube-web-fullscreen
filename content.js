@@ -1,15 +1,19 @@
 (function () {
   'use strict';
 
-  console.log('%c[YouTube Web Fullscreen] Extensão pronta! Procurando controles do player...', 'color: #3ea6ff; font-weight: bold; font-size: 13px;');
+  console.log('%c[YouTube Web Fullscreen] Extensão pronta!', 'color: #3ea6ff; font-weight: bold; font-size: 13px;');
 
   let isWebFullscreen = false;
   let webFullscreenBtn = null;
-  let svgExpandNode = null;
-  let svgCompressNode = null;
+  let svgNode = null;
+  let pathNode = null;
 
-  // Função auxiliar para criar elementos SVG em conformidade com o padrão de 36x36 do YouTube
-  function createSvgIcon(pathD) {
+  // Caminhos limpos e perfeitamente centralizados no grid 36x36
+  const PATH_EXPAND = 'M10 10h5v2h-3v3h-2v-5zm11 0h5v5h-2v-3h-3v-2zm-11 11h2v-3h3v-2h-5v5zm14-3h-3v2h5v-5h-2v3z M13 13h10v10H13z';
+  const PATH_COMPRESS = 'M15 15h-5v-2h3v-3h2v5zm6 0h5v2h-3v3h-2v-5zm-6 6h-2v3h-3v2h5v-5zm9 3h-3v-2h5v5h-2v-3z M13 13h10v10H13z';
+
+  // Cria um único elemento SVG para evitar qualquer deslocamento de layout
+  function createSvgElement() {
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.setAttribute('height', '100%');
     svg.setAttribute('version', '1.1');
@@ -18,22 +22,12 @@
 
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     path.setAttribute('fill', '#ffffff');
-    path.setAttribute('d', pathD);
+    path.setAttribute('d', PATH_EXPAND);
     svg.appendChild(path);
 
+    svgNode = svg;
+    pathNode = path;
     return svg;
-  }
-
-  // Ícones nativos do YouTube no grid 36x36
-  function initIcons() {
-    // Ícone de expandir para preencher a janela (frame retangular com cantos de expansão)
-    svgExpandNode = createSvgIcon(
-      'M 10,11 H 26 V 25 H 10 Z M 12,13 V 23 H 24 V 13 Z M 7,7 H 14 V 9 H 9 V 14 H 7 Z M 22,7 H 29 V 14 H 27 V 9 H 22 Z M 7,22 H 9 V 27 H 14 V 29 H 7 Z M 27,22 H 29 V 29 H 22 V 27 H 27 Z'
-    );
-    // Ícone de comprimir para sair do preenchimento
-    svgCompressNode = createSvgIcon(
-      'M 10,11 H 26 V 25 H 10 Z M 12,13 V 23 H 24 V 13 Z M 11,11 H 13 V 7 H 7 V 13 H 9 V 9 H 11 Z M 25,11 H 23 V 7 H 29 V 13 H 27 V 9 H 25 Z M 11,25 H 13 V 29 H 7 V 23 H 9 V 27 H 11 Z M 25,25 H 23 V 29 H 29 V 23 H 27 V 27 H 25 Z'
-    );
   }
 
   // Alterna entre o modo padrão e o modo Web Fullscreen
@@ -57,20 +51,18 @@
     window.dispatchEvent(new Event('resize'));
   }
 
-  // Atualiza tooltip e visibilidade do ícone
+  // Atualiza tooltip e alterna a geometria do caminho do SVG com segurança
   function updateButtonUI() {
-    if (!webFullscreenBtn || !svgExpandNode || !svgCompressNode) return;
+    if (!webFullscreenBtn || !pathNode) return;
 
     if (isWebFullscreen) {
       webFullscreenBtn.classList.add('active');
-      svgExpandNode.style.display = 'none';
-      svgCompressNode.style.display = 'block';
+      pathNode.setAttribute('d', PATH_COMPRESS);
       webFullscreenBtn.setAttribute('title', 'Sair da Janela (W)');
       webFullscreenBtn.setAttribute('aria-label', 'Sair da Janela (W)');
     } else {
       webFullscreenBtn.classList.remove('active');
-      svgExpandNode.style.display = 'block';
-      svgCompressNode.style.display = 'none';
+      pathNode.setAttribute('d', PATH_EXPAND);
       webFullscreenBtn.setAttribute('title', 'Preencher Janela (W)');
       webFullscreenBtn.setAttribute('aria-label', 'Preencher Janela (W)');
     }
@@ -90,7 +82,6 @@
     const rightControls = getRightControls();
     if (!rightControls) return;
 
-    // Se já estiver lá dentro, apenas garante estado
     let existingBtn = document.getElementById('yt-web-fullscreen-btn');
     if (existingBtn) {
       if (rightControls.contains(existingBtn)) {
@@ -102,17 +93,13 @@
       }
     }
 
-    if (!svgExpandNode || !svgCompressNode) {
-      initIcons();
-    }
-
     const button = document.createElement('button');
     button.id = 'yt-web-fullscreen-btn';
     button.className = 'ytp-button yt-web-fullscreen-btn';
     button.type = 'button';
 
-    button.appendChild(svgExpandNode);
-    button.appendChild(svgCompressNode);
+    const svg = createSvgElement();
+    button.appendChild(svg);
 
     button.addEventListener('click', (e) => {
       e.preventDefault();
@@ -179,7 +166,6 @@
   }
 
   function init() {
-    initIcons();
     injectButton();
     setupObserver();
 
@@ -193,7 +179,6 @@
       }
     });
 
-    // Intervalo de verificação para garantir injeção quando o player estiver pronto
     const interval = setInterval(() => {
       if (window.location.pathname.includes('/watch')) {
         injectButton();

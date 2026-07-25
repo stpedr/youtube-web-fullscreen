@@ -59,7 +59,7 @@ html.yt-web-fullscreen-active #movie_player .ytp-chrome-bottom {
   left: 12px !important;
 }
 
-/* Estilo idêntico aos botões nativos do player do YouTube (ex: Modo Teatro, Tela Cheia) */
+/* Botão perfeitamente alinhado aos botões nativos do player do YouTube */
 .ytp-button.yt-web-fullscreen-btn {
   display: inline-block !important;
   width: 36px !important;
@@ -67,7 +67,7 @@ html.yt-web-fullscreen-active #movie_player .ytp-chrome-bottom {
   vertical-align: top !important;
   cursor: pointer !important;
   position: relative !important;
-  background: none !important;
+  background: transparent !important;
   border: none !important;
   padding: 0 !important;
   margin: 0 !important;
@@ -75,6 +75,9 @@ html.yt-web-fullscreen-active #movie_player .ytp-chrome-bottom {
 }
 
 .ytp-button.yt-web-fullscreen-btn svg {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
   width: 100% !important;
   height: 100% !important;
   pointer-events: none !important;
@@ -87,5 +90,5 @@ html.yt-web-fullscreen-active #movie_player .ytp-chrome-bottom {
 
 .ytp-button.yt-web-fullscreen-btn:hover svg path,
 .ytp-button.yt-web-fullscreen-btn.active svg path {
-  fill: #3ea6ff !important; /* Azul de controle ativo do YouTube */
+  fill: #3ea6ff !important; /* Azul característico de controle ativo do YouTube */
 }
