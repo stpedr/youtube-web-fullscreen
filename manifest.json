@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "YouTube Web Fullscreen - Preencher Janela",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Expande o vídeo do YouTube para preencher toda a janela do navegador Firefox sem entrar em tela cheia do monitor.",
   "browser_specific_settings": {
     "gecko": {
